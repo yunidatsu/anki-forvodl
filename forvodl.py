@@ -62,7 +62,7 @@ class DownloaderDialog(QDialog):
         self.setLayout(self.mainLayout)
         
         descText = "<html>"
-        descText += "Download files into one of the these directories and they will be picked up:"
+        descText += "Download files into one of these directories and they will be picked up:"
         descText += "<ul>"
         
         for dir in self.watcher.getWatchedDirectories():
@@ -155,13 +155,13 @@ class DownloaderDialog(QDialog):
                 files.append(file)
         return files
 
-def RunForvoDownload(phrase):
+def RunForvoDownload(phrase, parentWin):
     # Open Forvo in external browser
     link = config["forvoLookupUrl"].format(phrase=phrase)
     QDesktopServices.openUrl(QUrl(link))
     
     # Show dialog and wait for audio files to be confirmed
-    dialog = DownloaderDialog(mw)
+    dialog = DownloaderDialog(parentWin)
 
     if dialog.exec_():
         return dialog.getAudioFiles()
@@ -202,7 +202,7 @@ def onForvoLookupButton(editor):
         return
     
     # Open Forvo and watch for files
-    files = RunForvoDownload(phrase)
+    files = RunForvoDownload(phrase, editor.parentWindow)
     
     # Add confirmed files to the editor
     for file in files:

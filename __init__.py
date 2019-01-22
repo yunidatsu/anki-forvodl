@@ -14,6 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+from aqt import mw
 
 from .util import *
 from .forvodl import *
@@ -24,4 +25,4 @@ RegisterForvoDownloadModule()
 
 #cb = QApplication.clipboard()
 #phrase = cb.text()
-#RunForvoDownload(phrase)
+#RunForvoDownload(phrase, mw)
