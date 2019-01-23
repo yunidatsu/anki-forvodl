@@ -3,5 +3,6 @@
     "forvoLookupUrl" : "https://forvo.com/word/{phrase}/#ja",
     "watchedDownloadDirectories" : [],
     "forvoFilePattern" : "^pronunciation_.*\\.mp3$",
-    "forvoEditorButtonShortcut" : "F10"
+    "forvoEditorButtonShortcut" : "F10",
+    "autoConfirmFirstDownload" : false
 }

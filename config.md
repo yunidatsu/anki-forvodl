@@ -10,3 +10,5 @@
 **forvoFilePattern**: Regex used to determine if a downloaded file is a Forvo audio file.
 
 **forvoEditorButtonShortcut**: Shortcut for the tiny button in the editor.
+
+**autoConfirmFirstDownload**: Automatically confirm the dialog and insert the first audio file that's downloaded.

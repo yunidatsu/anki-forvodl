@@ -82,12 +82,24 @@ class DownloaderDialog(QDialog):
         
         self.audioListLayout.setColumnStretch(1, 1)
         
+        self.autoConfirmBox = QCheckBox("Auto-confirm on first download", self)
+        self.autoConfirmBox.setCheckState(Qt.Checked if config["autoConfirmFirstDownload"] else Qt.Unchecked)
+        self.mainLayout.addWidget(self.autoConfirmBox)
+        
         self.buttonBox = QDialogButtonBox(self)
         self.buttonBox.addButton(QDialogButtonBox.Cancel)
         self.buttonBox.addButton(QDialogButtonBox.Ok)
         self.buttonBox.accepted.connect(self.accept)
         self.buttonBox.rejected.connect(self.reject)
         self.mainLayout.addWidget(self.buttonBox)
+        
+        self.accepted.connect(self.onAccept)
+    
+    def onAccept(self):
+        if self.autoConfirmBox.checkState() == Qt.Checked:
+            config["autoConfirmFirstDownload"] = True
+        else:
+            config["autoConfirmFirstDownload"] = False
     
     def removeAudioFileFromList(self, file):
         # Qt, why???
@@ -144,6 +156,9 @@ class DownloaderDialog(QDialog):
             removeButton.setProperty("forvodl-audio-file", file)
             removeButton.clicked.connect(self.onAudioRemovePressed)
             self.audioListLayout.addWidget(removeButton, row, 2)
+            
+            if self.autoConfirmBox.checkState() == Qt.Checked:
+                QTimer.singleShot(0, self.accept)
     
     def getAudioFiles(self):
         files = []
