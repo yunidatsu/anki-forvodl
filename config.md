@@ -12,3 +12,5 @@
 **forvoEditorButtonShortcut**: Shortcut for the tiny button in the editor.
 
 **autoConfirmFirstDownload**: Automatically confirm the dialog and insert the first audio file that's downloaded.
+
+**autoPromptOnEmptyFields**: A list of fields. If the first matching field from this list is empty when focus is lost on the active patternSourceFields field, a Forvo search will automatically be initiated to fill that empty field, without user interaction.

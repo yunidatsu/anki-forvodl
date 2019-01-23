@@ -184,10 +184,8 @@ def RunForvoDownload(phrase, parentWin):
     return []
 
 # Called when the Forvo search is about to start. Should return the phrase to
-# search for, probably by looking at one of the currently edited fields.
-def selectForvoSearchPhrase(editor):
-    n = editor.note
-    
+# search for, probably by looking at one of the note fields.
+def selectForvoSearchPhrase(n):
     exprName = None
     srcFields = config["patternSourceFields"]
     
@@ -207,17 +205,30 @@ def selectForvoSearchPhrase(editor):
     # TODO: Are we sure that this always works?
     return furigana.kanji(phrase)
 
-
-def onForvoLookupButton(editor):
+def RunForvoDownloadFromEditor(editor):
     # Select search phrase from the editor
-    phrase = selectForvoSearchPhrase(editor)
+    phrase = selectForvoSearchPhrase(editor.note)
     
     if phrase == None:
         showInfo("Search phrase couldn't be determined. Check your field names and config!")
         return
     
     # Open Forvo and watch for files
-    files = RunForvoDownload(phrase, editor.parentWindow)
+    return RunForvoDownload(phrase, editor.parentWindow)
+
+def RunForvoDownloadFromNote(note, parentWin):
+    # Select search phrase from the note
+    phrase = selectForvoSearchPhrase(note)
+    
+    if phrase == None:
+        showInfo("Search phrase couldn't be determined. Check your field names and config!")
+        return
+    
+    # Open Forvo and watch for files
+    return RunForvoDownload(phrase, parentWin)
+
+def onForvoLookupButton(editor):
+    files = RunForvoDownloadFromEditor(editor)
     
     # Add confirmed files to the editor
     for file in files:
@@ -243,6 +254,58 @@ def addEditorShortcuts(cuts, editor):
     cuts.append((config["forvoEditorButtonShortcut"], shortcut.trigger))
     return cuts
 
+def onEditFocusLost(flag, n, fidx):
+    if "japanese" not in n.model()['name'].lower():
+        return flag
+    
+    srcFields = config["patternSourceFields"]
+    
+    exprName = None
+    
+    # Find phrase field
+    # Double loop because srcFields is meant to be ordered by priority
+    for fieldCandidate in srcFields:
+        for idx, name in enumerate(mw.col.models.fieldNames(n.model())):
+            if name == fieldCandidate:
+                exprName = name
+                exprIdx = idx
+                break
+    
+    if not exprName:
+        return flag
+    if fidx != exprIdx:
+        return flag
+    
+    targetName = None
+    
+    for targetField in config["autoPromptOnEmptyFields"]:
+        for idx, name in enumerate(mw.col.models.fieldNames(n.model())):
+            if name == targetField:
+                targetName = name
+                targetIdx = idx
+                break
+    
+    if not targetName:
+        return flag
+    if n[targetName] != "":
+        return flag
+    
+    files = RunForvoDownloadFromNote(n, None)
+    
+    soundStr = ""
+    for f in files:
+        fname = mw.col.media.addFile(f)
+        anki.sound.clearAudioQueue()
+        anki.sound.play(fname)
+        soundStr += "[sound:%s]" % fname
+        
+    n[targetName] = soundStr
+    
+    return True
+
 def RegisterForvoDownloadModule():
     addHook("setupEditorButtons", addEditorButtons)
     addHook("setupEditorShortcuts", addEditorShortcuts)
+    
+    if len(config["autoPromptOnEmptyFields"]) != 0:
+        addHook("editFocusLost", onEditFocusLost)

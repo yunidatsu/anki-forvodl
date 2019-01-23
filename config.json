@@ -4,5 +4,6 @@
     "watchedDownloadDirectories" : [],
     "forvoFilePattern" : "^pronunciation_.*\\.mp3$",
     "forvoEditorButtonShortcut" : "F10",
-    "autoConfirmFirstDownload" : false
+    "autoConfirmFirstDownload" : false,
+    "autoPromptOnEmptyFields" : []
 }
