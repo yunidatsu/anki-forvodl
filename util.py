@@ -16,6 +16,7 @@
 
 
 from aqt.qt import *
+from aqt.utils import showInfo
 
 assetDir = os.path.join(os.path.dirname(__file__), "assets")
 
@@ -62,3 +63,18 @@ class DownloadWatcher(QObject):
 
 def FindDownloadDirectories():
     return QStandardPaths.standardLocations(QStandardPaths.DownloadLocation)
+
+# Find the aqt Editor object associated with the currently focused widget.
+# This is quite hacky, but many hooks don't get the editor object passed, so
+# this is the only way.
+def FindFocusedEditor():
+    focusWidget = QApplication.focusWidget()
+    
+    webViewWidget = focusWidget
+    while webViewWidget != None  and  webViewWidget.metaObject().className() != "EditorWebView":
+        webViewWidget = webViewWidget.parent()
+    
+    if webViewWidget == None:
+        return None
+    
+    return webViewWidget.editor

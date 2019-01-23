@@ -255,6 +255,8 @@ def addEditorShortcuts(cuts, editor):
     return cuts
 
 def onEditFocusLost(flag, n, fidx):
+    # NOTE: This is currently disabled. If re-enabled, another config variable name must be chosen
+    
     if "japanese" not in n.model()['name'].lower():
         return flag
     
@@ -290,7 +292,13 @@ def onEditFocusLost(flag, n, fidx):
     if n[targetName] != "":
         return flag
     
-    files = RunForvoDownloadFromNote(n, None)
+    # Hack, because unfortunately, we have no reference to the editor
+    editor = FindFocusedEditor()
+    
+    if editor:
+        files = RunForvoDownloadFromEditor(editor)
+    else:
+        files = RunForvoDownloadFromNote(n, None)
     
     soundStr = ""
     for f in files:
@@ -303,9 +311,38 @@ def onEditFocusLost(flag, n, fidx):
     
     return True
 
+def onEditFocusGained(n, fidx):
+    if "japanese" not in n.model()['name'].lower():
+        return flag
+    
+    targetName = None
+    
+    for targetField in config["autoPromptOnEmptyFields"]:
+        for idx, name in enumerate(mw.col.models.fieldNames(n.model())):
+            if name == targetField:
+                targetName = name
+                targetIdx = idx
+                break
+    
+    if not targetName:
+        return
+    if fidx != targetIdx:
+        return
+    if n[targetName] != "":
+        return
+    
+    # Hack, because unfortunately, we have no reference to the editor
+    editor = FindFocusedEditor()
+    
+    if editor:
+        onForvoLookupButton(editor)
+
 def RegisterForvoDownloadModule():
     addHook("setupEditorButtons", addEditorButtons)
     addHook("setupEditorShortcuts", addEditorShortcuts)
     
     if len(config["autoPromptOnEmptyFields"]) != 0:
-        addHook("editFocusLost", onEditFocusLost)
+        # NOTE: This was disabled because I deemed it not useful. Config variable was reallocated to the code below
+        #addHook("editFocusLost", onEditFocusLost)
+        
+        addHook("editFocusGained", onEditFocusGained)
