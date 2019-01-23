@@ -10,6 +10,8 @@ This Anki addon can be used to quickly search for pronunciations of phrases on t
 5. You **confirm** the list of files, and the addon adds them to your note. If you want, you can skip this step and instead auto-confirm the dialog when the first audio file is found.
 
 That's all it does. It is very basic, but I think it makes the process of adding pronunciations a lot quicker.
+
+Bear in mind that **you need to be logged in to forvo.com** to download files there, so you need a free Forvo account.
 <br>
 <br>
 <br>
