@@ -23,11 +23,17 @@ assetDir = os.path.join(os.path.dirname(__file__), "assets")
 class DownloadWatcher(QObject):
     downloadNoticed = pyqtSignal('QString')
 
-    def __init__(self):
-        super(DownloadWatcher, self).__init__()
+    def __init__(self, parent):
+        super(DownloadWatcher, self).__init__(parent)
         self.knownFiles = []
+        self.settlingFiles = []
         self.watching = False
-        self.watcher = QFileSystemWatcher()
+        self.watcher = QFileSystemWatcher(self)
+        
+        self.settleTimer = QTimer(self)
+        self.settleTimer.setInterval(250)
+        self.settleTimer.timeout.connect(self.settleTimerTimeout)
+        self.settleTimer.start()
     
     def addWatchedDirectory(self, dir):
         self.watcher.addPath(dir)
@@ -59,7 +65,25 @@ class DownloadWatcher(QObject):
     def onDirChanged(self, dir):
         newFiles = self.discoverNewFiles()
         for file in newFiles:
-            self.downloadNoticed.emit(QFileInfo(QDir(dir), file).absoluteFilePath())
+            if not file in self.settlingFiles:
+                self.settlingFiles.append(file)
+    
+    def settleTimerTimeout(self):
+        newSettlingFiles = []
+        settledFiles = []
+        
+        for file in self.settlingFiles:
+            info = QFileInfo(file)
+            
+            if info.size() != 0:
+                settledFiles.append(file)
+            else:
+                newSettlingFiles.append(file)
+        
+        self.settlingFiles = newSettlingFiles
+        
+        for file in settledFiles:
+            self.downloadNoticed.emit(file)
 
 def FindDownloadDirectories():
     return QStandardPaths.standardLocations(QStandardPaths.DownloadLocation)

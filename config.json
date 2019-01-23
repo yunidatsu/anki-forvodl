@@ -1,5 +1,5 @@
 {
-    "patternSourceFields" : ["Expression"],
+    "patternSourceFields" : ["Expression", "Kanji", "Kanji Word", "Front"],
     "forvoLookupUrl" : "https://forvo.com/word/{phrase}/#ja",
     "watchedDownloadDirectories" : [],
     "forvoFilePattern" : "^pronunciation_.*\\.mp3$",

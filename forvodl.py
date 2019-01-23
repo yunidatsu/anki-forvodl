@@ -37,7 +37,7 @@ class DownloaderDialog(QDialog):
     def __init__(self, parent):
         super(DownloaderDialog, self).__init__(parent)
         
-        self.watcher = DownloadWatcher()
+        self.watcher = DownloadWatcher(self)
         
         watchedDirs = config["watchedDownloadDirectories"]
         
@@ -100,6 +100,7 @@ class DownloaderDialog(QDialog):
             config["autoConfirmFirstDownload"] = True
         else:
             config["autoConfirmFirstDownload"] = False
+        mw.addonManager.writeConfig(__name__, config)
     
     def removeAudioFileFromList(self, file):
         # Qt, why???
@@ -211,7 +212,7 @@ def RunForvoDownloadFromEditor(editor):
     
     if phrase == None:
         showInfo("Search phrase couldn't be determined. Check your field names and config!")
-        return
+        return None
     
     # Open Forvo and watch for files
     return RunForvoDownload(phrase, editor.parentWindow)
@@ -222,13 +223,16 @@ def RunForvoDownloadFromNote(note, parentWin):
     
     if phrase == None:
         showInfo("Search phrase couldn't be determined. Check your field names and config!")
-        return
+        return None
     
     # Open Forvo and watch for files
     return RunForvoDownload(phrase, parentWin)
 
 def onForvoLookupButton(editor):
     files = RunForvoDownloadFromEditor(editor)
+    
+    if not files:
+        return
     
     # Add confirmed files to the editor
     for file in files:
