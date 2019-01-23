@@ -3,7 +3,7 @@ A half-automatic Forvo downloader addon for Anki 2.1
 
 This Anki addon can be used to quickly search for pronunciations of phrases on the website forvo.com and then add them to an Anki note. It works as follows:
 
-1. When adding or editing a note, you **select the field** you want the audio files to go in and **click the addon's button** in the editor (or use its keyboard shortcut).
+1. When adding or editing a note, you **select the field** you want the audio files to go in and **click the addon's button** in the editor (or use its configurable keyboard shortcut, F10 by default).
 2. The addon then opens the Forvo search results page in **your system's web browser**, where you can preview them and select which of them to add to Anki.
 3. You download the audio file(s) from Forvo (use the small arrow button below each entry) using your **web browser's regular download mechanism**.
 4. The addon will **monitor your web browser's download directory** to automatically find the audio files you've downloaded. It will show them in a dialog in Anki where you can again preview or remove some of them.
