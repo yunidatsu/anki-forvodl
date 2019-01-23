@@ -17,6 +17,10 @@ That's all it does. It is very basic, but I think it makes the process of adding
 
 ## FAQ
 
+**Q:** What languages are supported for Forvo?
+<br>
+**A:** As of now, the addon is written solely with Japanese in mind. That being said, there is very little language-specific stuff to the addon. It might already work just fine with other languages. If something doesn't work, you can open an issue on Github. In the meantime, you could take a look at the plugin's configuration to change things like the Forvo URL that's used or the Anki fields to consider for choosing the search phrase.
+
 **Q:** Does this work with Anki 2.0?
 <br>
 **A:** I don't think it does right now. It uses some features apparently introduced in Anki 2.1. It could probably be made to work with 2.0 with a few changes, I haven't tried that yet.
