@@ -1,5 +1,5 @@
 # anki-forvodl - A half-automatic Forvo downloader addon for Anki
-# Copyright (C) 2019 yunidatsu
+# Copyright (C) 2019, 2022 yunidatsu
 # 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,6 +15,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
+import anki.utils
 from aqt.qt import *
 from aqt.utils import showInfo
 
@@ -102,3 +103,11 @@ def FindFocusedEditor():
         return None
     
     return webViewWidget.editor
+
+def StripHtml(text):
+    if hasattr(anki.utils, "strip_html"):
+        # Newer Anki versions
+        return anki.utils.strip_html(text)
+    else:
+        # Older Anki versions
+        return anki.utils.stripHTML(text)

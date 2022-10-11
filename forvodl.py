@@ -1,5 +1,5 @@
 # anki-forvodl - A half-automatic Forvo downloader addon for Anki
-# Copyright (C) 2019 yunidatsu
+# Copyright (C) 2019, 2022 yunidatsu
 # 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-
+import html
 import re
 from aqt import mw
 from aqt.utils import showInfo
@@ -205,7 +205,7 @@ def selectForvoSearchPhrase(n):
 
     noteTypeName = n.note_type()["name"].lower()
     
-    phrase = mw.col.media.strip(n[exprName])
+    phrase = StripHtml(mw.col.media.strip(n[exprName]))
 
     # Check if this is a Japanese note
     japaneseNote = False
