@@ -174,9 +174,14 @@ class DownloaderDialog(QDialog):
         return files
 
 def RunForvoDownload(phrase, parentWin):
+    lookupUrls = config["forvoLookupUrl"]
+    if not isinstance(lookupUrls, list):
+        lookupUrls = [lookupUrls]
+
     # Open Forvo in external browser
-    link = config["forvoLookupUrl"].format(phrase=phrase)
-    QDesktopServices.openUrl(QUrl(link))
+    for url in lookupUrls:
+        link = url.format(phrase=phrase)
+        QDesktopServices.openUrl(QUrl(link))
     
     # Show dialog and wait for audio files to be confirmed
     dialog = DownloaderDialog(parentWin)
