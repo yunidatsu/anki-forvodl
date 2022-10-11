@@ -20,10 +20,10 @@ from aqt import mw
 from aqt.utils import showInfo
 from aqt.qt import *
 from anki.hooks import addHook
-from anki.template import furigana
 import anki.sound
 
 from .util import *
+from . import furigana
 
 
 config = mw.addonManager.getConfig(__name__)
@@ -200,11 +200,24 @@ def selectForvoSearchPhrase(n):
     
     if not exprName:
         return None
+
+    noteTypeName = n.note_type()["name"]
     
     phrase = mw.col.media.strip(n[exprName])
-    
-    # TODO: Are we sure that this always works?
-    return furigana.kanji(phrase)
+
+    # Check if this is a Japanese note
+    japaneseNote = False
+    for cand in config.get("japaneseNoteTypes", ["japanese"]):
+        if cand in noteTypeName:
+            japaneseNote = True
+            break
+
+    # For Japanese notes only, we'll try to extract just the kanji part in
+    # case we have a mixed string like "先生[せんせい]"
+    if japaneseNote:
+        phrase = furigana.kanji(phrase)
+
+    return phrase
 
 def RunForvoDownloadFromEditor(editor):
     # Select search phrase from the editor
