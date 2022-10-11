@@ -273,63 +273,6 @@ def addEditorShortcuts(cuts, editor):
     cuts.append((config["forvoEditorButtonShortcut"], shortcut.trigger))
     return cuts
 
-def onEditFocusLost(flag, n, fidx):
-    # NOTE: This is currently disabled. If re-enabled, another config variable name must be chosen
-    
-    if "japanese" not in n.model()['name'].lower():
-        return flag
-    
-    srcFields = config["patternSourceFields"]
-    
-    exprName = None
-    
-    # Find phrase field
-    # Double loop because srcFields is meant to be ordered by priority
-    for fieldCandidate in srcFields:
-        for idx, name in enumerate(mw.col.models.fieldNames(n.model())):
-            if name == fieldCandidate:
-                exprName = name
-                exprIdx = idx
-                break
-    
-    if not exprName:
-        return flag
-    if fidx != exprIdx:
-        return flag
-    
-    targetName = None
-    
-    for targetField in config["autoPromptOnEmptyFields"]:
-        for idx, name in enumerate(mw.col.models.fieldNames(n.model())):
-            if name == targetField:
-                targetName = name
-                targetIdx = idx
-                break
-    
-    if not targetName:
-        return flag
-    if n[targetName] != "":
-        return flag
-    
-    # Hack, because unfortunately, we have no reference to the editor
-    editor = FindFocusedEditor()
-    
-    if editor:
-        files = RunForvoDownloadFromEditor(editor)
-    else:
-        files = RunForvoDownloadFromNote(n, None)
-    
-    soundStr = ""
-    for f in files:
-        fname = mw.col.media.addFile(f)
-        anki.sound.clearAudioQueue()
-        anki.sound.play(fname)
-        soundStr += "[sound:%s]" % fname
-        
-    n[targetName] = soundStr
-    
-    return True
-
 def onEditFocusGained(n, fidx):
     global lastEditFocusGainedField
 
@@ -383,7 +326,4 @@ def RegisterForvoDownloadModule():
     addHook("setupEditorShortcuts", addEditorShortcuts)
     
     if len(config["autoPromptOnEmptyFields"]) != 0:
-        # NOTE: This was disabled because I deemed it not useful. Config variable was reallocated to the code below
-        #addHook("editFocusLost", onEditFocusLost)
-        
         addHook("editFocusGained", onEditFocusGained)
