@@ -6,5 +6,6 @@
     "forvoEditorButtonShortcut" : "F10",
     "autoConfirmFirstDownload" : false,
     "autoPromptOnEmptyFields" : [],
+    "autoPromptOnEmptyNoteTypes" : "all",
     "japaneseNoteTypes" : ["japanese"]
 }

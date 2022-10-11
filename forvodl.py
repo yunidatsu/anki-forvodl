@@ -28,6 +28,8 @@ from . import furigana
 
 config = mw.addonManager.getConfig(__name__)
 
+lastEditFocusGainedField = None
+
 
 # When shown, this dialog will begin watching the configured watched
 # download directories for any new Forvo audio files and then display
@@ -201,14 +203,14 @@ def selectForvoSearchPhrase(n):
     if not exprName:
         return None
 
-    noteTypeName = n.note_type()["name"]
+    noteTypeName = n.note_type()["name"].lower()
     
     phrase = mw.col.media.strip(n[exprName])
 
     # Check if this is a Japanese note
     japaneseNote = False
     for cand in config.get("japaneseNoteTypes", ["japanese"]):
-        if cand in noteTypeName:
+        if cand.lower() in noteTypeName:
             japaneseNote = True
             break
 
@@ -329,8 +331,30 @@ def onEditFocusLost(flag, n, fidx):
     return True
 
 def onEditFocusGained(n, fidx):
-    if "japanese" not in n.model()['name'].lower():
-        return flag
+    global lastEditFocusGainedField
+
+    # Only run auto-prompt logic when the focused field has actually changed.
+    # Otherwise we'll repeatedly prompt again if the user presses "Cancel" on the dialog.
+    field = {"note" : n.id, "fidx" : fidx}
+    if field == lastEditFocusGainedField:
+        return
+    lastEditFocusGainedField = field
+
+    noteTypeName = n.note_type()['name'].lower()
+
+    validNoteType = False
+    if config.get("autoPromptOnEmptyNoteTypes", "all") == "all":
+        # Run auto-prompt logic on all note types
+        validNoteType = True
+    else:
+        # Only run auto-prompt logic on note types from the whitelist
+        for cand in config["autoPromptOnEmptyNoteTypes"]:
+            if cand.lower() in noteTypeName:
+                validNoteType = True
+                break
+
+    if not validNoteType:
+        return
     
     targetName = None
     
