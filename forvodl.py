@@ -208,7 +208,7 @@ def selectForvoSearchPhrase(n):
     if not exprName:
         return None
 
-    noteTypeName = n.note_type()["name"].lower()
+    noteTypeName = n.model()["name"].lower()
     
     phrase = StripHtml(mw.col.media.strip(n[exprName]))
 
@@ -288,7 +288,7 @@ def onEditFocusGained(n, fidx):
         return
     lastEditFocusGainedField = field
 
-    noteTypeName = n.note_type()['name'].lower()
+    noteTypeName = n.model()['name'].lower()
 
     validNoteType = False
     if config.get("autoPromptOnEmptyNoteTypes", "all") == "all":
